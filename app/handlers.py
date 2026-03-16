@@ -17,10 +17,9 @@ async def cmd_start(message: Message):
                                        action=ChatAction.TYPING)
     await asyncio.sleep(0.5)
     await message.answer(
-        "Привет! Я твой бот помощник! Я буду напоминать тебе о важных событиях.", 
+        f"Привет, {message.from_user.full_name}! Я твой бот помощник! Я буду напоминать тебе о важных событиях.", 
         reply_markup=kb.main
     )
-
 
 @router.callback_query(F.data == "not_info")
 async def cmd_how(callback: CallbackQuery):
@@ -34,20 +33,20 @@ async def cmd_how(callback: CallbackQuery):
 async def cmd_skill(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text("Бот создан для того, чтобы напоминать вам о событиях.", 
-                                     reply_markup=kb.back)
+                                     reply_markup=kb.sp_back)
 
 @router.callback_query(F.data == "info_project")
 async def cmd_skill(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text("Бот создан как учебный проект.\n Информация об авторе: \n github: https://github.com/k0lttt \n Донат: jopa",
-                                     reply_markup=kb.back)
+                                     reply_markup=kb.sp_back)
 
-
-@router.callback_query(F.data == "not_help")
-async def cmd_help(callback: CallbackQuery):
+@router.callback_query(F.data == "info_back")
+async def cmd_how(callback: CallbackQuery):
     await callback.answer("")
-    await callback.message.answer(
-        "Для помощи обратитесь: @132lol321\n*Если столкнулись с проблемой, или нашли ошибку, сообщите в Поддержку!*"
+    await callback.message.edit_text(
+        f"Привет, {callback.from_user.full_name}! Я твой бот помощник! Я буду напоминать тебе о важных событиях.", 
+        reply_markup=kb.main
     )
 
 
