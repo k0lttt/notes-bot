@@ -1,17 +1,19 @@
 from aiogram.types import (ReplyKeyboardMarkup, KeyboardButton, 
                            InlineKeyboardButton, InlineKeyboardMarkup)
 
-main = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text="Создать напоминание"),
-                                      KeyboardButton(text="Изменить напоминание"), 
-                                      KeyboardButton(text="Закончить напоминание")],
-                                     [KeyboardButton(text="Просмотреть напоминания")],
-                                     [KeyboardButton(text="Поддержка"), KeyboardButton(text="Справка")],
-                                    ],
-                            resize_keyboard=True, 
-                            input_field_placeholder="Выберите нужное.."
-                            )
+main = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Создать напоминание", callback_data="not_create"),
+                                      InlineKeyboardButton(text="Изменить напоминание", callback_data="not_change"), 
+                                      InlineKeyboardButton(text="Закончить напоминание", callback_data="not_finish"),],
+                                     [InlineKeyboardButton(text="Просмотреть напоминания", callback_data="not_view")],
+                                     [InlineKeyboardButton(text="Поддержка", callback_data="not_help"), 
+                                      InlineKeyboardButton(text="Справка", callback_data="not_info")],
+                                    ])
 
-spravka = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Что умеет бот?", callback_data = "w_skill"),
-                                                 InlineKeyboardButton(text="О проекте", callback_data = "info")], 
-                                                 [InlineKeyboardButton(text = "Выход", callback_data = "exit")]
+spravka = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text="Что умеет бот?", callback_data = "info_wd"),
+                                                 InlineKeyboardButton(text="О проекте", callback_data = "info_project")], 
+                                                 [InlineKeyboardButton(text = "Выход", callback_data = "info_back")]
                                                 ])
+
+back = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="Назад", callback_data = "not_info")]]
+    )
