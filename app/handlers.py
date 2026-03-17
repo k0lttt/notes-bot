@@ -17,7 +17,7 @@ async def cmd_start(message: Message):
                                        action=ChatAction.TYPING)
     await asyncio.sleep(0.5)
     await message.answer(
-        f"Привет, {message.from_user.full_name}! Я твой бот помощник! Я буду напоминать тебе о важных событиях.", 
+        f'👋 Привет, {message.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
         reply_markup=kb.main
     )
 
@@ -25,27 +25,27 @@ async def cmd_start(message: Message):
 async def cmd_how(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text(
-        "Справка: ",
+        "🔎 Справочный материал:",
         reply_markup=kb.spravka
     )
 
 @router.callback_query(F.data == "info_wd")
 async def cmd_skill(callback: CallbackQuery):
     await callback.answer("")
-    await callback.message.edit_text("Бот создан для того, чтобы напоминать вам о событиях.", 
+    await callback.message.edit_text('🤖 Бот, который помнит за вас \n\n Отправьте мне сообщение и время — я верну его вам, когда наступит нужный момент. 📢 \n\nБольше никаких "ой, забыл" — только точность и забота о ваших делах.✅', 
                                      reply_markup=kb.sp_back)
 
 @router.callback_query(F.data == "info_project")
 async def cmd_skill(callback: CallbackQuery):
     await callback.answer("")
-    await callback.message.edit_text("Бот создан как учебный проект.\n Информация об авторе: \n github: https://github.com/k0lttt \n Донат: jopa",
-                                     reply_markup=kb.sp_back)
-
+    await callback.message.edit_text("Бот разработан в образовательных целях. Весь исходный код открыт и доступен в репозитории: \n\n 🔗 GitHub: <a href='https://github.com/k0lttt'>GitHub</a>!\n\n 🍩 Донат на кофе: jopa",
+                                     reply_markup=kb.sp_back,
+                                     parse_mode="HTML")
 @router.callback_query(F.data == "info_back")
 async def cmd_how(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text(
-        f"Привет, {callback.from_user.full_name}! Я твой бот помощник! Я буду напоминать тебе о важных событиях.", 
+        f'👋 Привет, {callback.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
         reply_markup=kb.main
     )
 
