@@ -8,10 +8,10 @@ from aiogram.fsm.context import FSMContext
 from . import keyboards as kb
 from .states import Crt
 
-router = Router()
+user = Router()
 
 
-@router.message(CommandStart())
+@user.message(CommandStart())
 async def cmd_start(message: Message):
     await message.bot.send_chat_action(chat_id=message.from_user.id, 
                                        action=ChatAction.TYPING)
@@ -21,7 +21,7 @@ async def cmd_start(message: Message):
         reply_markup=kb.main
     )
 
-@router.callback_query(F.data == "not_info")
+@user.callback_query(F.data == "not_info")
 async def cmd_how(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text(
@@ -29,19 +29,19 @@ async def cmd_how(callback: CallbackQuery):
         reply_markup=kb.spravka
     )
 
-@router.callback_query(F.data == "info_wd")
+@user.callback_query(F.data == "info_wd")
 async def cmd_skill(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text('🤖 Бот, который помнит за вас \n\n Отправьте мне сообщение и время — я верну его вам, когда наступит нужный момент. 📢 \n\nБольше никаких "ой, забыл" — только точность и забота о ваших делах.✅', 
                                      reply_markup=kb.sp_back)
 
-@router.callback_query(F.data == "info_project")
+@user.callback_query(F.data == "info_project")
 async def cmd_skill(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text("Бот разработан в образовательных целях. Весь исходный код открыт и доступен в репозитории: \n\n 🔗 GitHub: <a href='https://github.com/k0lttt'>GitHub</a>!\n\n 🍩 Донат на кофе: jopa",
                                      reply_markup=kb.sp_back,
                                      parse_mode="HTML")
-@router.callback_query(F.data == "info_back")
+@user.callback_query(F.data == "info_back")
 async def cmd_how(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text(
@@ -50,18 +50,18 @@ async def cmd_how(callback: CallbackQuery):
     )
 
 
-@router.message(Command("create"))
+@user.message(Command("create"))
 async def cmd_crt(message: Message, state: FSMContext):
     await state.set_state(Crt.notes_name)
     await message.answer("Как будет называться напоминание?")
 
-@router.message(Crt.notes_name)
+@user.message(Crt.notes_name)
 async def cmd_crt_notesname(message: Message, state: FSMContext):
     await state.update_data(notes_name=message.text)
     await state.set_state(Crt.notes_time)
     await message.answer("Введите время напоминания")
 
-@router.message(Crt.notes_time)
+@user.message(Crt.notes_time)
 async def cmd_crt_notestime(message: Message, state: FSMContext):
     await state.update_data(notes_time=message.text)
     await state.set_state(Crt.notes_time)
