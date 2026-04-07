@@ -7,6 +7,8 @@ from my_config import config_bot
 from app.handlers import user
 from app.admin import admin
 
+from app.database.models import init_models
+
 import redis.asyncio as aioredis
 
 async def main():
@@ -14,8 +16,20 @@ async def main():
     logging.basicConfig(level = logging.INFO, filename = "py_logbot.log", filemode = "w")
     bot = Bot(token=config_bot.bot_token.get_secret_value())
     dp = Dispatcher(storage=RedisStorage(redis))
+    dp.startup.register(startup)
+    dp.shutdown.register(shutdown)
     dp.include_routers(user, admin)
     await dp.start_polling(bot)
+
+
+async def startup(dispatcher: Dispatcher):
+    
+    await init_models()
+    logging.info("Bot started up")
+
+ 
+async def shutdown(dispatcher: Dispatcher):
+    logging.info("Bot shutting down")   
     
 
 if __name__ == "__main__":
