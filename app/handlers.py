@@ -1,9 +1,12 @@
 from aiogram import F, Router, Bot
 import asyncio
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import Command, CommandStart, StateFilter
 from aiogram.types import Message, CallbackQuery
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
+
+from app.database.requests import set_user
+from app.database.requests import update_user
 
 from . import keyboards as kb
 from .states import Crt
@@ -12,14 +15,31 @@ user = Router()
 
 
 @user.message(CommandStart())
-async def cmd_start(message: Message):
+async def cmd_start(message: Message, state: FSMContext):
     await message.bot.send_chat_action(chat_id=message.from_user.id, 
                                        action=ChatAction.TYPING)
-    await asyncio.sleep(0.5)
-    await message.answer(
-        f'👋 Привет, {message.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
-        reply_markup=kb.main
-    )
+    await asyncio.sleep(0.3)
+    is_user = await set_user(message.from_user.id)
+    if not is_user:
+        await message.answer(
+            f'👋 Привет! \n Пройдите процесс регестрации.. \n\n Введите ваше имя..✍️', 
+            reply_markup=await kb.client_name(message.from_user.first_name)
+        )
+        await state.set_state('reg_name')
+    else:
+        await message.answer(
+            f'🤝 Добро пожаловать, {message.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
+            reply_markup=kb.main
+        )
+
+@user.message(StateFilter('reg_name'))
+async def get_reg_name(message: Message, state: FSMContext):
+    await state.update_data(name=message.text.capitalize)
+    data = await state.get_data()
+    await update_user(message.from_user.id, 
+                    data['name'])
+    await message.answer('Регистрация прошла успешно!', 
+                        reply_markup=kb.main)
 
 @user.callback_query(F.data == "not_info")
 async def cmd_how(callback: CallbackQuery):
