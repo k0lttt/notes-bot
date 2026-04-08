@@ -40,6 +40,7 @@ async def get_reg_name(message: Message, state: FSMContext):
                     data['name'])
     await message.answer('Регистрация прошла успешно!', 
                         reply_markup=kb.main)
+    await state.clear()
 
 @user.callback_query(F.data == "not_info")
 async def cmd_how(callback: CallbackQuery):
