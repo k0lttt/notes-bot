@@ -22,3 +22,9 @@ sp_back = InlineKeyboardMarkup(inline_keyboard=[
 go_main = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="⬅️ Назад", callback_data = "go_main")]]
     )
+
+
+async def client_name(name):
+    return ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=name)]],
+                               resize_keyboard=True,
+                               input_field_placeholder='Введите имя или оставьте такое же..')
