@@ -34,11 +34,10 @@ async def cmd_start(message: Message, state: FSMContext):
 
 @user.message(StateFilter('reg_name'))
 async def get_reg_name(message: Message, state: FSMContext):
-    await state.update_data(name=message.text.capitalize())
+    await state.update_data(user_name=message.text.capitalize())
     data = await state.get_data()
     await update_user(message.from_user.id,
                       data['user_name'])
-
     await message.answer('Регистрация пройдена успешно!', 
                         reply_markup = ReplyKeyboardRemove())
     await message.answer(
