@@ -37,10 +37,12 @@ async def get_reg_name(message: Message, state: FSMContext):
     await state.update_data(name=message.text.capitalize)
     data = await state.get_data()
     await update_user(message.from_user.id, 
-                    data['name'])
-    await message.answer('Регистрация пройдена успешно!',
-                        reply_markup=ReplyKeyboardRemove(), 
-                        reply_markup=kb.main)
+                    data['name'], 
+                    reply_markup=ReplyKeyboardRemove(),
+                    )
+    await message.answer('Регистрация пройдена успешно!', 
+                        reply_markup=kb.main
+                        )
     await state.clear()
 
 @user.callback_query(F.data == "not_info")
