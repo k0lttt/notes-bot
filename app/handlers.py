@@ -1,7 +1,7 @@
 from aiogram import F, Router, Bot
 import asyncio
 from aiogram.filters import Command, CommandStart, StateFilter
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 
@@ -38,7 +38,8 @@ async def get_reg_name(message: Message, state: FSMContext):
     data = await state.get_data()
     await update_user(message.from_user.id, 
                     data['name'])
-    await message.answer('Регистрация прошла успешно!', 
+    await message.answer('Регистрация пройдена успешно!',
+                        reply_markup=ReplyKeyboardRemove(), 
                         reply_markup=kb.main)
     await state.clear()
 
