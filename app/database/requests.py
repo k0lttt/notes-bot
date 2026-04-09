@@ -9,7 +9,7 @@ async def set_user(tg_id):
             session.add(User(tg_id=tg_id))
             await session.commit()
             return False
-        return True if user.name else False
+        return True
     
 async def update_user(tg_id, name):
     async with async_session() as session:
