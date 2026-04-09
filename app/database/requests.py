@@ -9,10 +9,10 @@ async def set_user(tg_id):
             session.add(User(tg_id=tg_id))
             await session.commit()
             return False
-        return True
+        return True if User.user_name else False
     
 async def update_user(tg_id, name):
     async with async_session() as session:
-        await session.execute(update(User).where(User.tg_id == tg_id).values(name=name))
+        await session.execute(update(User).where(User.tg_id == tg_id).values(user_name=name))
 
         await session.commit()
