@@ -38,15 +38,14 @@ async def get_reg_name(message: Message, state: FSMContext):
     data = await state.get_data()
     await update_user(message.from_user.id,
                       data['name'])
-    
+    await state.clear()
+
     await message.answer('Регистрация пройдена успешно!', 
                         reply_markup = ReplyKeyboardRemove())
     await message.answer(
             f'🤝 Добро пожаловать, {message.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
             reply_markup=kb.main
         )
-    
-    await state.clear()
 
 @user.callback_query(F.data == "not_info")
 async def cmd_how(callback: CallbackQuery):
