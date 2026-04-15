@@ -9,7 +9,6 @@ from app.database.requests import set_user
 from app.database.requests import update_user
 
 from . import keyboards as kb
-from .states import Crt
 
 user = Router()
 
@@ -48,6 +47,26 @@ async def get_reg_name(message: Message, state: FSMContext):
     
     await state.clear()
 
+@user.callback_query(F.data == "not_create")
+async def cmd_notcreate(message: Message, callback: CallbackQuery, state: FSMContext):
+    await callback.answer("")
+    await callback.message.answer("Для создания напоминания напишите его.. : \n\n", 
+                                  reply_markup=kb.create_not)
+    await state.set_state("name_notice")
+
+@user.callback_query(F.data == "back_crnot")
+async def cmd_back(callback: CallbackQuery):
+    await callback.message.edit_text(
+        f'🤝 Добро пожаловать, {callback.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
+            reply_markup=kb.main
+            )
+
+@user.message(StateFilter('name_notice'))
+async def get_nameofnot(message: Message, state: FSMContext):
+    await state.update_data(title=message.text.capitalize())
+    pass
+
+    
 
 @user.callback_query(F.data == "not_info")
 async def cmd_how(callback: CallbackQuery):
@@ -73,25 +92,7 @@ async def cmd_skill(callback: CallbackQuery):
 async def cmd_how(callback: CallbackQuery):
     await callback.answer("")
     await callback.message.edit_text(
-        f'👋 Привет, {callback.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
-        reply_markup=kb.main
-    )
+        f'🤝 Добро пожаловать, {callback.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
+            reply_markup=kb.main
+            )
 
-
-@user.message(Command("create"))
-async def cmd_crt(message: Message, state: FSMContext):
-    await state.set_state(Crt.notes_name)
-    await message.answer("Как будет называться напоминание?")
-
-@user.message(Crt.notes_name)
-async def cmd_crt_notesname(message: Message, state: FSMContext):
-    await state.update_data(notes_name=message.text)
-    await state.set_state(Crt.notes_time)
-    await message.answer("Введите время напоминания")
-
-@user.message(Crt.notes_time)
-async def cmd_crt_notestime(message: Message, state: FSMContext):
-    await state.update_data(notes_time=message.text)
-    await state.set_state(Crt.notes_time)
-    data = await state.get_data()
-    await message.answer(f"Создано напоминание: \n{data['notes_name']} - {data['notes_time']}")

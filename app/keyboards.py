@@ -18,6 +18,10 @@ sp_back = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="⬅️ Назад", callback_data = "not_info")]]
     )
 
+create_not = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text="⬅️ Назад", callback_data = "back_crnot")]
+])
+
 
 go_main = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text="⬅️ Назад", callback_data = "go_main")]]
