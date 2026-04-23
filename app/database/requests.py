@@ -15,3 +15,14 @@ async def update_user(tg_id, name):
     async with async_session() as session:
         await session.execute(update(User).where(User.tg_id == tg_id).values(user_name=name))
         await session.commit()
+
+async def timezone_check(tg_id):
+    async with async_session() as session:
+        user = await session.scalar(select(User).where(User.tg_id == tg_id))
+
+    if user.timezone=="UTC":
+        return True
+    return False
+
+async def get_title():
+    pass

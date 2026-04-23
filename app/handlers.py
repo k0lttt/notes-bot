@@ -5,8 +5,8 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 
-from app.database.requests import set_user
-from app.database.requests import update_user
+from app.database.requests import set_user, timezone_check
+from app.database.requests import update_user, get_title
 
 from . import keyboards as kb
 
@@ -50,9 +50,13 @@ async def get_reg_name(message: Message, state: FSMContext):
 @user.callback_query(F.data == "not_create")
 async def cmd_notcreate(message: Message, callback: CallbackQuery, state: FSMContext):
     await callback.answer("")
-    await callback.message.answer("Для создания напоминания напишите его.. : \n\n", 
-                                  reply_markup=kb.create_not)
-    await state.set_state("name_notice")
+    is_timezone = timezone_check(message.from_user.id)
+    if is_timezone:
+        message.answer("Перед созданием напоминания укажите свой часовой пояс: \n \n(Укажите в формате + к  МСК) \n Например если вы из Москвы, напишите +0, \n а если вы из Екатеринбурга, напишите +2")
+    else:
+        await callback.message.answer("Для создания напоминания напишите его.. : \n\n", 
+                                    reply_markup=kb.create_not)
+        await state.set_state("name_notice")
 
 @user.callback_query(F.data == "back_crnot")
 async def cmd_back(callback: CallbackQuery):
@@ -64,7 +68,9 @@ async def cmd_back(callback: CallbackQuery):
 @user.message(StateFilter('name_notice'))
 async def get_nameofnot(message: Message, state: FSMContext):
     await state.update_data(title=message.text.capitalize())
-    pass
+    data = await state.get_data()
+    await get_title(message.from_user.id,
+                      data['title'])
 
     
 
