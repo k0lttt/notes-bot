@@ -48,13 +48,13 @@ async def get_reg_name(message: Message, state: FSMContext):
     await state.clear()
 
 @user.callback_query(F.data == "not_create")
-async def cmd_notcreate(message: Message, callback: CallbackQuery, state: FSMContext):
+async def cmd_notcreate(callback: CallbackQuery, state: FSMContext):
     await callback.answer("")
-    is_timezone = timezone_check(message.from_user.id)
+    is_timezone = timezone_check(callback.from_user.id)
     if is_timezone:
-        message.answer("Перед созданием напоминания укажите свой часовой пояс: \n \n(Укажите в формате + к  МСК) \n Например если вы из Москвы, напишите +0, \n а если вы из Екатеринбурга, напишите +2")
+        callback.message.edit_text("Перед созданием напоминания укажите свой часовой пояс: \n \n(Укажите в формате + к  МСК) \n Например если вы из Москвы, напишите +0, \n а если вы из Екатеринбурга, напишите +2")
     else:
-        await callback.message.answer("Для создания напоминания напишите его.. : \n\n", 
+        await callback.message.answer("Для создания напоминания напишите его название.. : \n\n", 
                                     reply_markup=kb.create_not)
         await state.set_state("name_notice")
 
