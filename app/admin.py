@@ -6,6 +6,6 @@ from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 
 from . import keyboards as kb
-from .states import Crt
+
 
 admin = Router()
