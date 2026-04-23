@@ -8,6 +8,8 @@ from aiogram.fsm.context import FSMContext
 from app.database.requests import set_user, timezone_check
 from app.database.requests import update_user, get_title
 
+
+from . import states as st
 from . import keyboards as kb
 
 user = Router()
@@ -52,11 +54,12 @@ async def cmd_notcreate(callback: CallbackQuery, state: FSMContext):
     await callback.answer("")
     is_timezone = await timezone_check(callback.from_user.id)
     if is_timezone:
-        callback.message.edit_text("Перед созданием напоминания укажите свой часовой пояс: \n \n(Укажите в формате + к  МСК) \n Например если вы из Москвы, напишите +0, \n а если вы из Екатеринбурга, напишите +2")
+        await callback.message.edit_text("Перед созданием напоминания укажите свой часовой пояс: \n \n(Укажите в формате + к  МСК) \n Например если вы из Москвы, напишите +0, \n а если вы из Екатеринбурга, напишите +2")
+        
+        await state.set_state(st.NoticeStates.notes_name)
     else:
         await callback.message.answer("Для создания напоминания напишите его название.. : \n\n", 
                                     reply_markup=kb.create_not)
-        await state.set_state("name_notice")
 
 @user.callback_query(F.data == "back_crnot")
 async def cmd_back(callback: CallbackQuery):
@@ -65,7 +68,7 @@ async def cmd_back(callback: CallbackQuery):
             reply_markup=kb.main
             )
 
-@user.message(StateFilter('name_notice'))
+@user.message(StateFilter(st.NoticeStates.notes_name))
 async def get_nameofnot(message: Message, state: FSMContext):
     await state.update_data(title=message.text.capitalize())
     data = await state.get_data()
