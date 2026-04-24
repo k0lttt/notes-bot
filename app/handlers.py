@@ -63,10 +63,12 @@ async def cmd_notcreate(callback: CallbackQuery, state: FSMContext):
     
 @user.message(StateFilter(st.NoticeStates.reg_timezone))
 async def new_timezone(message: Message, state: FSMContext):
-    await state.update_data(title=message.text.capitalize())
+    await state.update_data(new_timezone=message.text.capitalize())
     timezone_new = await state.get_data()
     await timezone_update(message.from_user.id,
                        timezone_new['new_timezone'])
+    await message.answer('Часовой пояс обновлен!',
+                         reply_markup=kb.create_not)
     
     await state.set_state(st.NoticeStates.notes_name)
 
