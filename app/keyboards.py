@@ -19,7 +19,8 @@ sp_back = InlineKeyboardMarkup(inline_keyboard=[
     )
 
 create_not = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text="⬅️ Назад", callback_data = "back_crnot")]
+    [InlineKeyboardButton(text="⬅️ Назад", callback_data = "back_crnot"),
+     InlineKeyboardButton(text="Изменить часовой пояс", callback_data = "timezone_readd")]
 ])
 
 

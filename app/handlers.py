@@ -5,8 +5,8 @@ from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 
-from app.database.requests import set_user, timezone_check
-from app.database.requests import update_user, get_title
+from app.database.requests import (set_user, timezone_check, update_user, 
+                                   get_title, timezone_update)
 
 
 from . import states as st
@@ -26,14 +26,14 @@ async def cmd_start(message: Message, state: FSMContext):
             f'👋 Привет! \n Пройдите процесс регестрации.. \n\n Введите ваше имя..✍️', 
             reply_markup=await kb.client_name(message.from_user.first_name)
         )
-        await state.set_state('reg_name')
+        await state.set_state(st.NoticeStates.reg_name)
     else:
         await message.answer(
             f'🤝 Добро пожаловать, {message.from_user.full_name}! \n Я Notes-bot! Я буду напоминать тебе о важных для тебя событиях, стоит тебе только создать напоминание. Для начала работы нажми на "Создать Напоминание"', 
             reply_markup=kb.main
         )
 
-@user.message(StateFilter('reg_name'))
+@user.message(st.NoticeStates.reg_name)
 async def get_reg_name(message: Message, state: FSMContext):
     await state.update_data(user_name=message.text.capitalize())
     data = await state.get_data()
@@ -56,10 +56,23 @@ async def cmd_notcreate(callback: CallbackQuery, state: FSMContext):
     if is_timezone:
         await callback.message.edit_text("Перед созданием напоминания укажите свой часовой пояс: \n \n(Укажите в формате + к  МСК) \n Например если вы из Москвы, напишите +0, \n а если вы из Екатеринбурга, напишите +2")
         
-        await state.set_state(st.NoticeStates.notes_name)
+        await state.set_state(st.NoticeStates.reg_timezone)
     else:
         await callback.message.answer("Для создания напоминания напишите его название.. : \n\n", 
                                     reply_markup=kb.create_not)
+    
+@user.message(StateFilter(st.NoticeStates.reg_timezone))
+async def new_timezone(message: Message, state: FSMContext):
+    await state.update_data(title=message.text.capitalize())
+    timezone_new = await state.get_data()
+    await timezone_update(message.from_user.id,
+                       timezone_new['new_timezone'])
+    
+    await state.set_state(st.NoticeStates.notes_name)
+
+@user.message(StateFilter(st.NoticeStates.notes_name))
+async def not_name(message: Message, State: FSMContext):
+    pass
 
 @user.callback_query(F.data == "back_crnot")
 async def cmd_back(callback: CallbackQuery):

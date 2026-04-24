@@ -22,5 +22,9 @@ async def timezone_check(tg_id):
 
     return timezone=="UTC"
 
+async def timezone_update(tg_id, new_timezone):
+    async with async_session() as session:
+        await session.execute(update(User).where(User.tg_id==tg_id).values(timezone=new_timezone))
+
 async def get_title():
     pass
