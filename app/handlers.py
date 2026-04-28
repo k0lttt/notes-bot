@@ -61,6 +61,14 @@ async def cmd_notcreate(callback: CallbackQuery, state: FSMContext):
         await callback.message.edit_text("Для создания напоминания напишите его название.. : \n\n", 
                                     reply_markup=kb.create_not)
     
+@user.callback_query(F.data=="timezone_readd")
+async def cmd_recreate_note(callback: CallbackQuery, state: FSMContext):
+    await callback.answer("")
+    is_timezone = await timezone_check(callback.from_user.id)
+    if is_timezone:
+        await callback.message.edit_text("Перед созданием напоминания укажите свой часовой пояс: \n \n(Укажите в формате + к  МСК) \n Например если вы из Москвы, напишите +0, \n а если вы из Екатеринбурга, напишите +2")
+        
+        await state.set_state(st.NoticeStates.reg_timezone)
 
 @user.message(StateFilter(st.NoticeStates.reg_timezone))
 async def new_timezone(message: Message, state: FSMContext):
@@ -71,7 +79,6 @@ async def new_timezone(message: Message, state: FSMContext):
     await message.answer('Часовой пояс обновлен!',
                          reply_markup=kb.create_not)
     
-    await state.set_state(st.NoticeStates.notes_name)
 
 @user.message(StateFilter(st.NoticeStates.notes_name))
 async def not_name(message: Message, State: FSMContext):
