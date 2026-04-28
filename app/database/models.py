@@ -26,7 +26,7 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     tg_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
     user_name: Mapped[str] = mapped_column(String(32), nullable=True)
-    timezone: Mapped[str] = mapped_column(String(31), default='UTC', nullable=False)
+    timezone: Mapped[str] = mapped_column(String(31), default=None, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, 
         server_default=func.now()
