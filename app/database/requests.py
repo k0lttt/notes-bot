@@ -29,6 +29,7 @@ async def timezone_update(tg_id, new_timezone):
 
         await session.commit()
 
+async def get_name():
 
 
 

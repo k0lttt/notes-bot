@@ -6,7 +6,7 @@ from aiogram.enums import ChatAction
 from aiogram.fsm.context import FSMContext
 
 from app.database.requests import (set_user, timezone_check, update_user, 
-                                   get_title, timezone_update)
+                                   get_title, timezone_update, get_name)
 
 
 from . import states as st
@@ -58,8 +58,9 @@ async def cmd_notcreate(callback: CallbackQuery, state: FSMContext):
         
         await state.set_state(st.NoticeStates.reg_timezone)
     else:
-        await callback.message.edit_text("Для создания напоминания напишите его название.. : \n\n", 
+        await callback.message.edit_text("Для создания напоминания напишите его название: \n\n", 
                                     reply_markup=kb.create_not)
+        await state.set_state(st.NoticeStates.notes_name_name)
     
 @user.callback_query(F.data=="timezone_readd")
 async def cmd_recreate_note(callback: CallbackQuery, state: FSMContext):
@@ -79,8 +80,12 @@ async def new_timezone(message: Message, state: FSMContext):
     
 
 @user.message(StateFilter(st.NoticeStates.notes_name))
-async def not_name(message: Message, State: FSMContext):
-    pass
+async def not_name(message: Message, state: FSMContext):
+    await state.update_data(notice_name=message.text.capitalize())
+    nt_name = await state.get_data()
+    await get_name(message.from_user.id,
+                   nt_name['notice_name'])
+    await message.answer(f"Напоминание с названием: {nt_name['notice_name']} почти готово! \n \n Уточните, через какое время его воспроизвести? \n \n(Число(Если не сегодня) Часы:минуты)")
 
 @user.callback_query(F.data == "back_crnot")
 async def cmd_back(callback: CallbackQuery):
